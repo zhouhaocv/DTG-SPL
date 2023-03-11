@@ -1,0 +1,110 @@
+WORKERS: 8
+
+MODEL_DIR: ./../checkpoints
+LOG_DIR: ./../log
+DATA_DIR: ./../data/Charades-STA/I3D
+
+DATASET:
+  NAME: Charades_i3d
+  VIS_INPUT_TYPE: i3d
+  NO_VAL: True
+  NUM_SAMPLE_CLIPS: 128
+  NORMALIZE: True
+
+CUDNN:
+  DETERMINISTIC: False
+  BENCHMARK: True
+
+LOSS:
+  LAMBDA: 0.5
+  GAMMA1: 0.1
+  GAMMA2: 0.05
+  EPR: 5.0
+
+TRAIN:
+  BATCH_SIZE: 32
+  LR: 0.0002
+  WEIGHT_DECAY: 0.0000
+  MAX_EPOCH: 150
+  STEPS: [15]
+  CONTINUE: False
+  INTRA_CORRELATION: False
+
+TEST:
+  BATCH_SIZE: 32
+  NMS_THRESH: 0.57
+  NMS_TYPE: gaussian
+  RECALL: 1,5
+  TIOU: 0.3,0.5,0.7
+  EVAL_TRAIN: True
+  EVAL_BETA: 0.5
+  EVAL_SENT: False
+  T_THRESH: 0.5
+
+DTG_SPL:
+
+  VIDEO_EMBEDDER:
+    NAME: VideoEmbedder
+    PARAMS:
+      input_size: 1024
+      hidden_dim: 512
+
+  QUERY_EMBEDDER:
+    NAME: QueryEmbedder
+    PARAMS:
+      txt_input_size: 300
+      txt_hidden_dim: 512
+      pre_fuse: True
+      GRU:
+        num_layers: 2
+        bidirectional: True
+
+  TRANSFORMER:
+    NAME: Transformer
+    PARAMS:
+      hidden_dim: 512
+      dropout: 0.0
+      nheads: 8
+      dim_feedforward: 2048
+      enc_layers: 6
+      dec_layers: 6
+      pre_norm: False
+      num_queries: 5
+      TC:
+        nblocks: 1
+        ksize: 15
+
+  REGRESSION:
+    NAME: RegressionHead
+    PARAMS:
+        hidden_dim: 512
+
+  SEMANTIC:
+    NAME: Semantic_resconstruction
+    PARAMS:
+        trans_type: word
+        hidden_dim: 512
+        vocab_size: 678
+        sos_id: 1
+        eos_id: 2
+        max_word: 8
+        max_query: 14
+        cell_type: gru
+        num_layers: 2
+        bidirectional: True
+        input_dropout_p: 0
+        dropout_p: 0
+        use_attention: True
+        
+  MATCHING:
+    NAME: Proposal_matching
+    PARAMS:
+      split: False
+      input_size: 512
+      hidden_dim: 512
+      ANCHOR_NUM: 16
+      SAMPLING_NUM: [16]
+      early_stop: 4
+MODEL:
+  NAME: DTG-SPL
+  CHECKPOINT: ''
