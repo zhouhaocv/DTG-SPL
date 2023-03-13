@@ -32,7 +32,7 @@ TRAIN:
 
 TEST:
   BATCH_SIZE: 32
-  NMS_THRESH: 0.57
+  NMS_THRESH: 0.55
   NMS_TYPE: gaussian
   RECALL: 1,5
   TIOU: 0.3,0.5,0.7
